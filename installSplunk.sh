@@ -37,7 +37,8 @@ if [ ! -z "$region" ]; then
   curl -O https://bootstrap.pypa.io/get-pip.py
   python get-pip.py
   pip install awscli
+  ip=`curl -s http://169.254.169.254/latest/meta-data/public-ipv4`
   instanceId=`curl -s http://169.254.169.254/latest/meta-data/instance-id`
-  aws sns publish --topic-arn $topic --region $region --message "$HOSTNAME is up"
-  aws ec2 create-tags --region $region --resources $instanceId --tags Key=Name,Value=$HOSTNAME
+  aws sns publish --topic-arn $topic --region $region --message "$host ($ip) is up"
+  aws ec2 create-tags --region $region --resources $instanceId --tags Key=Name,Value=$host
 fi
