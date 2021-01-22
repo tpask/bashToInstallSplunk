@@ -2,7 +2,6 @@
 
 host=
 region=
-topic=
 
 #set hostname if host var is set
 if [ ! -z "$host" ]; then
@@ -30,15 +29,3 @@ fi
 $SPLUNK_HOME/bin/splunk start --answer-yes --no-prompt --accept-license --seed-passwd $splunk_passwd
 $SPLUNK_HOME/bin/splunk enable boot-start 
 
-
-#this section is only for AWS instnaces
-# install aws cli if region exists
-if [ ! -z "$region" ]; then
-  curl -O https://bootstrap.pypa.io/get-pip.py
-  python get-pip.py
-  pip install awscli
-  ip=`curl -s http://169.254.169.254/latest/meta-data/public-ipv4`
-  instanceId=`curl -s http://169.254.169.254/latest/meta-data/instance-id`
-  aws sns publish --topic-arn $topic --region $region --message "$host ($ip) is up"
-  aws ec2 create-tags --region $region --resources $instanceId --tags Key=Name,Value=$host
-fi
